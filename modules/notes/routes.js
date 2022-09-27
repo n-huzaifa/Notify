@@ -1,4 +1,6 @@
 const router = require("express").Router();
+const validator = require("./../../middleware/validator");
+const { noteSchema } = require("../../validation/note");
 const {
   getAllNotesController,
   getNoteByIdController,
@@ -8,9 +10,9 @@ const {
 } = require("./controller");
 
 router.get("/", getAllNotesController);
-router.get("/", getNoteByIdController);
-router.post("/", postNoteController);
-router.put("/", updateNoteByIdController);
-router.delete("/", deleteNoteByIdController);
+router.get("/:id", getNoteByIdController);
+router.post("/", validator(noteSchema), postNoteController);
+router.put("/:id", validator(noteSchema), updateNoteByIdController);
+router.delete("/:id", deleteNoteByIdController);
 
 module.exports = router;

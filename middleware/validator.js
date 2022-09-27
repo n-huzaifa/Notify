@@ -1,7 +1,8 @@
 function validator(schema) {
   return async function (req, res, next) {
     try {
-      const { value, error } = schema.validate(req.body || {});
+      const data = req.body;
+      const { value, error } = schema.validate(data || {});
 
       if (error) {
         res.status(403).json({ error: error.details });
