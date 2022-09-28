@@ -8,15 +8,14 @@ function responseData(data, token) {
   return data;
 }
 
-async function signupController(req, res) {
+async function signupController(req, res, next) {
   try {
     const { first_name, last_name, email, password } = req.body;
 
     const userExist = await User.findOne({ email });
 
     if (userExist) {
-      res.status(403).json({ error: "User Already exists. Please Login !" });
-      return;
+      next({ status: 403, message: "User Already exists. Please Login !" });
     }
 
     const encryptedPass = await bcrypt.hash(password, 10);
@@ -33,7 +32,7 @@ async function signupController(req, res) {
 
     res.status(200).json(data);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next({ status: 500, message: error.message });
   }
 }
 
@@ -43,10 +42,10 @@ async function loginController(req, res) {
     const loggedInUser = await User.findOne({ email });
 
     if (!loggedInUser) {
-      res
-        .status(401)
-        .json({ error: "No user exists with this email. First signup!" });
-      return;
+      next({
+        status: 401,
+        message: "No user exists with this email. First signup!",
+      });
     }
     const authenticated = await bcrypt.compare(password, loggedInUser.password);
 
@@ -63,7 +62,7 @@ async function loginController(req, res) {
 
     res.status(200).json(data);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next({ status: 500, message: error.message });
   }
 }
 

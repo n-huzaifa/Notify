@@ -7,7 +7,7 @@ function authenticator(req, res, next) {
       req.body.token || req.headers["x-access-token"] || req.body.query;
 
     if (!token) {
-      res.status(403).json({ error: "JWT Token required" });
+      next({ status: 404, message: "JWT Token required" });
       return;
     }
 
@@ -15,7 +15,7 @@ function authenticator(req, res, next) {
     req.user = decoded;
     return next();
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next({ status: 500, message: error.message });
   }
 }
 

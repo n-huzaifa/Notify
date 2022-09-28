@@ -1,35 +1,34 @@
 const Note = require("./../../model/noteModel");
 
-async function getAllNotesController(req, res) {
+async function getAllNotesController(req, res, next) {
   try {
-    const data = await Note.find({});
+    const userId = req.user.userId;
+    const data = await Note.find({ userID: userId });
     res.status(200).json(data);
     return;
   } catch (error) {
-    res.status(500).json({ error: error.message });
-    return;
+    next({ status: 500, message: error.message });
   }
 }
 
-async function getNoteByIdController(req, res) {
+async function getNoteByIdController(req, res, next) {
   try {
     const _id = req.params.id;
     const data = await Note.findOne({ _id: _id });
 
     if (!data) {
-      res.status(200).json({ error: "Note doesn't exist" });
+      next({ status: 404, message: "Note doesn't exist" });
       return;
     }
 
     res.status(200).json(data);
     return;
   } catch (error) {
-    res.status(500).json({ error: error.message });
-    return;
+    next({ status: 500, message: error.message });
   }
 }
 
-async function postNoteController(req, res) {
+async function postNoteController(req, res, next) {
   try {
     const userId = req.user.userId;
     const data = await Note.create({
@@ -41,12 +40,11 @@ async function postNoteController(req, res) {
     res.status(200).json(data);
     return;
   } catch (error) {
-    res.status(500).json({ error: error.message });
-    return;
+    next({ status: 500, message: error.message });
   }
 }
 
-async function updateNoteByIdController(req, res) {
+async function updateNoteByIdController(req, res, next) {
   try {
     const noteId = req.params.id;
     const userId = req.user.userId;
@@ -57,33 +55,31 @@ async function updateNoteByIdController(req, res) {
     });
 
     if (!data) {
-      res.status(200).json({ error: "Note doesn't exist" });
+      next({ status: 404, message: "Note doesn't exist" });
       return;
     }
 
     res.status(200).json(data);
     return;
   } catch (error) {
-    res.status(500).json({ error: error.message });
-    return;
+    next({ status: 500, message: error.message });
   }
 }
 
-async function deleteNoteByIdController(req, res) {
+async function deleteNoteByIdController(req, res, next) {
   try {
     const noteId = req.params.id;
     const data = await Note.findByIdAndDelete(noteId);
 
     if (!data) {
-      res.status(200).json({ error: "Note doesn't exist" });
+      next({ status: 403, message: "Note doesn't exist" });
       return;
     }
 
     res.status(200).json({ ok: true });
     return;
   } catch (error) {
-    res.status(500).json({ error: error.message });
-    return;
+    next({ status: 500, message: error.message });
   }
 }
 

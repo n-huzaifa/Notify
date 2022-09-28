@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const { mongoose } = require("mongoose");
+const ErrorHandler = require("./middleware/errorHandler");
 const routes = require("./routes");
 
 const app = express();
@@ -9,6 +10,14 @@ const DB_URI = process.env.MONGO_DB_URI;
 
 app.use(express.json());
 app.use("/api", routes);
+app.all("*", (req, res, next) => {
+  next({
+    status: 404,
+    message: `Can't find ${req.originalUrl} on this server!`,
+  });
+});
+
+app.use(ErrorHandler);
 
 mongoose
   .connect(DB_URI)
