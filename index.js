@@ -3,11 +3,12 @@ const express = require("express");
 const { mongoose } = require("mongoose");
 const ErrorHandler = require("./middleware/errorHandler");
 const routes = require("./routes");
-
+const cors = require("cors");
 const app = express();
 const port = process.env.SERVER_PORT;
 const DB_URI = process.env.MONGO_DB_URI;
 
+app.use(cors());
 app.use(express.json());
 app.use("/api", routes);
 app.all("*", (req, res, next) => {

@@ -36,7 +36,7 @@ async function signupController(req, res, next) {
   }
 }
 
-async function loginController(req, res) {
+async function loginController(req, res, next) {
   try {
     const { email, password } = req.body;
     const loggedInUser = await User.findOne({ email });
